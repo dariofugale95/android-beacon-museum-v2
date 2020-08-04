@@ -1,5 +1,6 @@
 package com.castagnolofugale.smartmuseum;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +26,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class BeaconResultsActivity extends AppCompatActivity {
 
-    private static String url = "http://192.168.0.102:4000/"; //edit url
+    private static String url = "http://192.168.1.149:4000/"; //edit url
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +74,9 @@ public class BeaconResultsActivity extends AppCompatActivity {
                 String a = "";
                 for (int j = 0; j < artist.length(); j++) a += artist.getString(j) + ((j == artist.length()-1) ? "" : ", ");
                 ((TextView)newArtworkView.findViewById(R.id.artist_artwork)).setText(a);
-                Picasso.get().setLoggingEnabled(true);
-                if(URLUtil.isValidUrl(artwork.getString("ThumbnailURL")))
-                    Picasso.get().load(artwork.getString("ThumbnailURL")).fit()
-                        .centerCrop().error(R.mipmap.no_image)
-               .into((ImageView) newArtworkView.findViewById(R.id.imageView));
+
+                if(URLUtil.isValidUrl(artwork.getString("ThumbnailURL"))) Picasso.get().load(artwork.getString("ThumbnailURL")).fit()
+                        .centerCrop().error(R.mipmap.no_image).into((ImageView) newArtworkView.findViewById(R.id.imageView));
 
                 ((TextView)newArtworkView.findViewById(R.id.data_artwork)).setText(artwork.getString("Date"));
                 dynamicContent.addView(newArtworkView);
@@ -85,6 +84,11 @@ public class BeaconResultsActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void showArtworkDetails(View v){
+        startActivity(new Intent(BeaconResultsActivity.this, ArtworkDetailsActivity.class));
+
     }
 
     @Override
