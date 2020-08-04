@@ -26,7 +26,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class BeaconResultsActivity extends AppCompatActivity {
 
-    private static String url = "http://192.168.1.149:4000/"; //edit url
+    private static String url = "http://192.168.0.102:4000/"; //edit url
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +58,7 @@ public class BeaconResultsActivity extends AppCompatActivity {
 
     /** Recupera le informazioni dal server **/
     private void showResults(JSONArray results) {
+        Picasso.get().setLoggingEnabled(true);
         Toast.makeText(BeaconResultsActivity.this, results.length() + " results", Toast.LENGTH_LONG).show();
         if(results.length() <= 0) return;
 
