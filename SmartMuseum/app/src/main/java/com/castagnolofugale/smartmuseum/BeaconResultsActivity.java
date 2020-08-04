@@ -1,5 +1,6 @@
 package com.castagnolofugale.smartmuseum;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +26,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class BeaconResultsActivity extends AppCompatActivity {
 
-    private static String url = "http://192.168.1.10:4000/"; //edit url
+    private static String url = "http://192.168.1.149:4000/"; //edit url
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +84,11 @@ public class BeaconResultsActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void showArtworkDetails(View v){
+        startActivity(new Intent(BeaconResultsActivity.this, ArtworkDetailsActivity.class));
+
     }
 
     @Override
