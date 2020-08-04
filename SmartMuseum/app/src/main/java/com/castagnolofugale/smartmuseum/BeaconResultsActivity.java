@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -57,15 +58,18 @@ public class BeaconResultsActivity extends AppCompatActivity {
     }
 
     /** Recupera le informazioni dal server **/
-    private void showResults(JSONArray results) {
+    private void showResults(JSONArray results)
+    {
         Toast.makeText(BeaconResultsActivity.this, results.length() + " results", Toast.LENGTH_LONG).show();
         if(results.length() <= 0) return;
 
         LinearLayout dynamicContent = findViewById(R.id.dynamic_artwork);
         dynamicContent.removeAllViews();
 
-        for (int i = 0; i < results.length(); i++) {
-            try {
+        for (int i = 0; i < results.length(); i++)
+        {
+            try
+            {
                 JSONObject artwork = results.getJSONObject(i);
                 View newArtworkView = getLayoutInflater().inflate(R.layout.item_artwork, dynamicContent, false);
                 ((TextView)newArtworkView.findViewById(R.id.title_artwork)).setText(artwork.getString("Title"));
@@ -79,16 +83,25 @@ public class BeaconResultsActivity extends AppCompatActivity {
                         .centerCrop().error(R.mipmap.no_image).into((ImageView) newArtworkView.findViewById(R.id.imageView));
 
                 ((TextView)newArtworkView.findViewById(R.id.data_artwork)).setText(artwork.getString("Date"));
+
+                ((TextView)newArtworkView.findViewById(R.id.id_artwork)).setText(artwork.getString("ObjectID"));
+
                 dynamicContent.addView(newArtworkView);
-            } catch (JSONException e) {
+            } catch (JSONException e)
+            {
                 e.printStackTrace();
             }
         }
     }
 
-    public void showArtworkDetails(View v){
-        startActivity(new Intent(BeaconResultsActivity.this, ArtworkDetailsActivity.class));
-
+    public void showArtworkDetails(View v)
+    {
+        Intent intent = new Intent(BeaconResultsActivity.this, ArtworkDetailsActivity.class);
+        TextView textView = (TextView) findViewById(R.id.id_artwork);
+        String objectId = (String) textView.getText();
+        System.out.println(objectId);
+        intent.putExtra("ObjectId", objectId);
+        startActivity(intent);
     }
 
     @Override
