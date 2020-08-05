@@ -99,7 +99,6 @@ public class BeaconResultsActivity extends AppCompatActivity {
         Intent intent = new Intent(BeaconResultsActivity.this, ArtworkDetailsActivity.class);
         TextView textView = (TextView) findViewById(R.id.id_artwork);
         String objectId = (String) textView.getText();
-        System.out.println(objectId);
         intent.putExtra("ObjectId", objectId);
         startActivity(intent);
     }
