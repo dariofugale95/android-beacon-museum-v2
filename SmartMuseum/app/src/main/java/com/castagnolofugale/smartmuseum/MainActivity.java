@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
     @Override
     public void onBeaconServiceConnect() {
         beaconManager.addRangeNotifier(new RangeNotifier() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 if(beaconManager.isBound(MainActivity.this) != true) return;
@@ -257,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
     }
 
     /** Invia una notifica se l'app è in pausa**/
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void sendNotification(MyBeacon mBeacon) {
         String NOTIFICATION_CHANNEL_ID = "channel_id";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

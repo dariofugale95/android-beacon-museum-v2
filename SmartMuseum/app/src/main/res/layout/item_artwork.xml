@@ -102,6 +102,17 @@
                 app:layout_constraintTop_toTopOf="@+id/artist_artwork"
                 tools:text="Data" />
 
+            <TextView
+                android:id="@+id/id_artwork"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/title_artwork"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/artist_artwork"
+                app:layout_constraintTop_toTopOf="@+id/artist_artwork"
+                tools:text="Data" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
