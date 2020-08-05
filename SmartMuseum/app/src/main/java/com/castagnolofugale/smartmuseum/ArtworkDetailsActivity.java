@@ -10,5 +10,10 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artwork_details);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String ObjectID = extras.getString("ObjectId");
+            System.out.println(ObjectID.toString());
+        }
     }
 }
