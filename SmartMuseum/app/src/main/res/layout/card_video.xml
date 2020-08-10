@@ -74,45 +74,6 @@
                 tools:text="Titolo Quadro" />
 
 
-            <TextView
-                android:id="@+id/artist_artwork"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/title_video"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/title_video"
-                app:layout_constraintTop_toBottomOf="@id/title_video"
-                tools:text="Artista" />
-
-            <TextView
-                android:id="@+id/data_artwork"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/title_video"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/artist_artwork"
-                app:layout_constraintTop_toTopOf="@+id/artist_artwork"
-                tools:text="Data" />
-
-            <TextView
-                android:id="@+id/id_artwork"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="@+id/title_video"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/artist_artwork"
-                app:layout_constraintTop_toTopOf="@+id/artist_artwork"
-                tools:text="Data" />
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
