@@ -21,13 +21,12 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import cz.msebera.android.httpclient.Header;
 
 public class BeaconResultsActivity extends AppCompatActivity {
 
-    private static String url = "http://192.168.1.149:4000/"; //edit url
+    private static String url = "http://192.168.1.178:4000/"; //edit url
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +69,26 @@ public class BeaconResultsActivity extends AppCompatActivity {
         {
             try
             {
-                JSONObject artwork = results.getJSONObject(i);
+               final JSONObject artwork = results.getJSONObject(i);
                 View newArtworkView = getLayoutInflater().inflate(R.layout.item_artwork, dynamicContent, false);
-                ((TextView)newArtworkView.findViewById(R.id.title_artwork)).setText(artwork.getString("Title"));
+
+                //associazione onclick alla view del singolo item
+                 newArtworkView.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View view) {
+                          try {
+                              Intent artworkDetailsIntent=new Intent(BeaconResultsActivity.this,ArtworkDetailsActivity.class);
+                              artworkDetailsIntent.putExtra("ArtworkUrl", artwork.getString("URL"));
+                              startActivity(artworkDetailsIntent);
+                         } catch (JSONException e) {
+                             e.printStackTrace();
+                             System.out.println("problema onclick");
+                         }
+                     }
+                 });
+
+
+                ((TextView)newArtworkView.findViewById(R.id.title_video)).setText(artwork.getString("Title"));
 
                 JSONArray artist = artwork.getJSONArray("Artist");
                 String a = "";
@@ -80,7 +96,7 @@ public class BeaconResultsActivity extends AppCompatActivity {
                 ((TextView)newArtworkView.findViewById(R.id.artist_artwork)).setText(a);
 
                 if(URLUtil.isValidUrl(artwork.getString("ThumbnailURL"))) Picasso.get().load(artwork.getString("ThumbnailURL")).fit()
-                        .centerCrop().error(R.mipmap.no_image).into((ImageView) newArtworkView.findViewById(R.id.imageView));
+                        .centerCrop().error(R.mipmap.no_image).into((ImageView) newArtworkView.findViewById(R.id.videoPreView));
 
                 ((TextView)newArtworkView.findViewById(R.id.data_artwork)).setText(artwork.getString("Date"));
 
@@ -93,7 +109,7 @@ public class BeaconResultsActivity extends AppCompatActivity {
             }
         }
     }
-
+/*
     public void showArtworkDetails(View v)
     {
         Intent intent = new Intent(BeaconResultsActivity.this, ArtworkDetailsActivity.class);
@@ -102,6 +118,8 @@ public class BeaconResultsActivity extends AppCompatActivity {
         intent.putExtra("ObjectId", objectId);
         startActivity(intent);
     }
+
+ */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
