@@ -35,6 +35,8 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
 
 
     private void getMedia(String url) {
+        final LinearLayout dynamicContent= findViewById(R.id.videoList);
+        dynamicContent.removeAllViews();
         new AsyncHttpClient().get(url, new TextHttpResponseHandler() {
             //ArrayList<String> uriYouTube = new ArrayList();
             //ArrayList<String> threeDModels = new ArrayList();
@@ -65,15 +67,16 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                         //uri.add(myuri);
 
                         System.out.println("Found uri " + myuri);
-                        LinearLayout dynamicContent = findViewById(R.id.videoList);
-                        dynamicContent.removeAllViews();
+
+                        View newListView = getLayoutInflater().inflate(R.layout.card_video, dynamicContent, false);
+                        TextView infoVideoView = (TextView) newListView.findViewById(R.id.title_video);
                         if (myuri.contains("youtube")) {
-                           //GetMedia(myuri, dynamicContent);
+                            PlayVideo(myuri,dynamicContent,newListView,infoVideoView);
                            // uriYouTube.add(myuri);
                         }
                         if (myuri.contains("sketchfab")) {
                             System.out.println("3d");
-                            Play3DModel(myuri,dynamicContent);
+                            Play3DModel(myuri,dynamicContent,newListView,infoVideoView);
                         };
                     }
 
@@ -83,12 +86,9 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void Play3DModel(final String threeDModel,LinearLayout dynamicContent2) {
-        System.out.println("Dentro Play3dModel");
-        //final LinearLayout dynamicContent = findViewById(R.id.videoList);
-        //dynamicContent.removeAllViews();
-        View newListView = getLayoutInflater().inflate(R.layout.card_video, dynamicContent2, false);
-        TextView infoVideoView = (TextView) newListView.findViewById(R.id.title_video);
+    private void Play3DModel(final String threeDModel, LinearLayout dynamicContent, View newListView, TextView infoVideoView) {
+        System.out.println("Dentro play3d");
+
         infoVideoView.setText("3D Model");
 
         newListView.setOnClickListener(new View.OnClickListener() {
@@ -100,15 +100,14 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                 startActivity(browserIntent);
             }
         });
-        //dynamicContent.addView(newListView);
-        dynamicContent2.addView(newListView);
+        dynamicContent.addView(newListView);
 
 
     }
 
 
 
-    private void GetMedia(final String urlMedia, final LinearLayout dynamicContent) {
+    private void PlayVideo(final String urlMedia, final LinearLayout dynamicContent, final View newListView, final TextView infoVideoView) {
 
         new AsyncHttpClient().get(urlMedia, new TextHttpResponseHandler() {
             @Override
@@ -131,8 +130,7 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                 } else {
                     title = String.valueOf(Html.fromHtml(title.toString()));
                 }
-                View newListView = getLayoutInflater().inflate(R.layout.card_video, dynamicContent, false);
-                TextView infoVideoView = (TextView) newListView.findViewById(R.id.title_video);
+
                 infoVideoView.setText(title);
 
                 newListView.setOnClickListener(new View.OnClickListener() {
