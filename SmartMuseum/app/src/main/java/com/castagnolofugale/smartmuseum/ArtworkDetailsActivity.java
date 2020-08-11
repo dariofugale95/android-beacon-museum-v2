@@ -63,13 +63,17 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                         myuri = myuri.substring(0, lastIndex);
                         //in uri conservo gli uri di tutti i video
                         //uri.add(myuri);
+
                         System.out.println("Found uri " + myuri);
+                        LinearLayout dynamicContent = findViewById(R.id.videoList);
+                        dynamicContent.removeAllViews();
                         if (myuri.contains("youtube")) {
-                            GetMedia(myuri);
+                           //GetMedia(myuri, dynamicContent);
                            // uriYouTube.add(myuri);
                         }
                         if (myuri.contains("sketchfab")) {
                             System.out.println("3d");
+                            Play3DModel(myuri,dynamicContent);
                         };
                     }
 
@@ -79,17 +83,33 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void Play3DModel(ArrayList<String> threeDModels) {
-        for (String a : threeDModels) {
-            System.out.println("3DModel uri found:" + a);
-        }
+    private void Play3DModel(final String threeDModel,LinearLayout dynamicContent2) {
+        System.out.println("Dentro Play3dModel");
+        //final LinearLayout dynamicContent = findViewById(R.id.videoList);
+        //dynamicContent.removeAllViews();
+        View newListView = getLayoutInflater().inflate(R.layout.card_video, dynamicContent2, false);
+        TextView infoVideoView = (TextView) newListView.findViewById(R.id.title_video);
+        infoVideoView.setText("3D Model");
+
+        newListView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println(threeDModel);
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(threeDModel));
+                startActivity(browserIntent);
+            }
+        });
+        //dynamicContent.addView(newListView);
+        dynamicContent2.addView(newListView);
+
+
     }
 
 
 
-    private void GetMedia(final String urlMedia) {
-        final LinearLayout dynamicContent = findViewById(R.id.videoList);
-        dynamicContent.removeAllViews();
+    private void GetMedia(final String urlMedia, final LinearLayout dynamicContent) {
+
         new AsyncHttpClient().get(urlMedia, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
