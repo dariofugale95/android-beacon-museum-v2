@@ -54,7 +54,7 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 String toFind = "<iframe";
                 int index = 0;
-
+                //video and 3DModels urls
                 while (index >= 0) {
                     index = responseString.indexOf(toFind, index + 1);
                     if (index > 0) {
@@ -81,6 +81,42 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                     }
 
                 }
+                //audio urls
+                String audioToFind = "data-audio-url";
+                int indexAudio = 0;
+                int indexTitle=0;
+                while (indexAudio >= 0) {
+                    indexAudio = responseString.indexOf(audioToFind, indexAudio + 1);
+                    System.out.println("Index " + indexAudio);
+
+                    if (indexAudio > 0) {
+                        indexAudio += 16;
+
+                        int lastIndexAudio = responseString.indexOf('\"',indexAudio) > 0 ? responseString.indexOf('\"',indexAudio) : responseString.indexOf('\'',indexAudio);
+                        String myAudioUri = responseString.substring(indexAudio, lastIndexAudio);
+                        indexTitle = responseString.indexOf("data-audio-title=", lastIndexAudio + 1);
+                        indexTitle=indexTitle+18;
+                        int lastIndexTitle=responseString.indexOf('\"',indexTitle) > 0 ? responseString.indexOf('\"',indexTitle) : responseString.indexOf('\'',indexTitle);
+                        System.out.println("Found uri Audio: " + myAudioUri);
+                        String myTitle = responseString.substring(indexTitle, lastIndexTitle);
+                        System.out.println("Found uri TITLE " + myTitle);
+                        View newListView = getLayoutInflater().inflate(R.layout.card_video, dynamicContent, false);
+                        TextView infoVideoView = (TextView) newListView.findViewById(R.id.title_video);
+                        if (myAudioUri.contains(".mp3")) {
+                            System.out.println("MP3");
+                            myAudioUri="https://www.moma.org"+myAudioUri;
+                            PlayAudio(myAudioUri,dynamicContent,newListView,infoVideoView,myTitle);
+
+                        }
+
+
+
+                    }
+
+
+
+                }
+
 
             }
         });
@@ -104,6 +140,44 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
 
 
     }
+
+    private void PlayAudio(final String audioUrl, LinearLayout dynamicContent, View newListView, TextView infoVideoView,String title) {
+        System.out.println("Dentro play audio");
+
+
+
+        if(title!=null){
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                title = String.valueOf(Html.fromHtml(title.toString(), Html.FROM_HTML_MODE_LEGACY));
+
+            } else {
+                title = String.valueOf(Html.fromHtml(title.toString()));
+            }
+            title = title.replaceAll("\\<[^>]*>","");
+           // title = title.replaceAll("a href=*","");
+            infoVideoView.setText(title);
+
+        }
+        else{
+
+            infoVideoView.setText("Play Audio");
+        }
+        System.out.println(title);
+        newListView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println(audioUrl);
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(audioUrl));
+                startActivity(browserIntent);
+            }
+        });
+        dynamicContent.addView(newListView);
+
+
+    }
+
 
 
 
