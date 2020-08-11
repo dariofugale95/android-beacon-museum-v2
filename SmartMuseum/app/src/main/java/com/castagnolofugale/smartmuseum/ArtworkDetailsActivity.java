@@ -9,12 +9,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
-
-import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -23,9 +22,15 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_artwork_details);
+
         String url = getIntent().getStringExtra("ArtworkUrl");
         //Bundle extras = getIntent().getExtras();
+        setContentView(R.layout.activity_artowork_details_result);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle("Details");
+        }
         if (url != null) {
 
             System.out.println(url);
@@ -35,12 +40,13 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
 
 
     private void getMedia(String url) {
-        final LinearLayout dynamicContent= findViewById(R.id.videoList);
-        dynamicContent.removeAllViews();
+
+
+        final View progressBar2 = findViewById(R.id.progressLoading);
+
+
         new AsyncHttpClient().get(url, new TextHttpResponseHandler() {
-            //ArrayList<String> uriYouTube = new ArrayList();
-            //ArrayList<String> threeDModels = new ArrayList();
-            ArrayList<String> uri = new ArrayList();
+
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 System.out.println(statusCode + " BAD");
@@ -52,6 +58,15 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
+
+                setContentView(R.layout.activity_artwork_details);
+                final LinearLayout dynamicContent= findViewById(R.id.videoList);
+                progressBar2.setVisibility(View.GONE);
+
+
+
+                dynamicContent.removeAllViews();
+
                 String toFind = "<iframe";
                 int index = 0;
                 //video and 3DModels urls
