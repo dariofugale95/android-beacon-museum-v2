@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/videoPreView"
+                android:id="@+id/PreView"
                 android:layout_width="0dp"
                 android:layout_height="150dp"
                 android:layout_marginTop="5dp"
@@ -54,10 +54,10 @@
                 android:background="@android:color/transparent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/videoPreView" />
+                app:layout_constraintTop_toBottomOf="@id/PreView" />
 
             <TextView
-                android:id="@+id/title_video"
+                android:id="@+id/title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -69,7 +69,7 @@
                 android:textColor="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/videoPreView"
+                app:layout_constraintTop_toBottomOf="@id/PreView"
                 app:layout_constraintTop_toTopOf="@id/header_divider"
                 tools:text="Titolo Quadro" />
 
