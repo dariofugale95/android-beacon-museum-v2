@@ -5,42 +5,55 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
-
-import java.util.ArrayList;
+import com.squareup.picasso.Picasso;
 
 import cz.msebera.android.httpclient.Header;
 
 public class ArtworkDetailsActivity extends AppCompatActivity {
+   // private Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_artwork_details);
+       // context=this;
         String url = getIntent().getStringExtra("ArtworkUrl");
+        String urlImage =getIntent().getStringExtra("Image");
         //Bundle extras = getIntent().getExtras();
+        setContentView(R.layout.activity_artowork_details_result);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle("Details");
+        }
         if (url != null) {
 
             System.out.println(url);
-            getMedia(url);
+            getMedia(url,urlImage);
         }
     }
 
 
-    private void getMedia(String url) {
-        final LinearLayout dynamicContent= findViewById(R.id.videoList);
-        dynamicContent.removeAllViews();
+    private void getMedia(String url, final String urlImage) {
+
+
+        final View progressBar2 = findViewById(R.id.progressLoading);
+
+
         new AsyncHttpClient().get(url, new TextHttpResponseHandler() {
-            //ArrayList<String> uriYouTube = new ArrayList();
-            //ArrayList<String> threeDModels = new ArrayList();
-            ArrayList<String> uri = new ArrayList();
+
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 System.out.println(statusCode + " BAD");
@@ -48,13 +61,19 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
             }
 
 
-
-
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
+
+                setContentView(R.layout.activity_artwork_details);
+                final LinearLayout dynamicContent = findViewById(R.id.videoList);
+                progressBar2.setVisibility(View.GONE);
+
+
+                dynamicContent.removeAllViews();
+
                 String toFind = "<iframe";
                 int index = 0;
-
+                //video and 3DModels urls
                 while (index >= 0) {
                     index = responseString.indexOf(toFind, index + 1);
                     if (index > 0) {
@@ -69,18 +88,62 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                         System.out.println("Found uri " + myuri);
 
                         View newListView = getLayoutInflater().inflate(R.layout.card_video, dynamicContent, false);
-                        TextView infoVideoView = (TextView) newListView.findViewById(R.id.title_video);
+                        TextView infoVideoView = (TextView) newListView.findViewById(R.id.title);
+                        ImageView infoImage=(ImageView) newListView.findViewById(R.id.PreView);
                         if (myuri.contains("youtube")) {
-                            PlayVideo(myuri,dynamicContent,newListView,infoVideoView);
-                           // uriYouTube.add(myuri);
+                            Picasso.get().load(R.drawable.icon_movie).fit()
+                                    .centerInside().error(R.mipmap.no_image).into(infoImage);
+                            PlayVideo(myuri, dynamicContent, newListView, infoVideoView);
+                            // uriYouTube.add(myuri);
                         }
                         if (myuri.contains("sketchfab")) {
+                            Picasso.get().load(R.drawable.icon_3d).fit()
+                                                               .centerInside().error(R.mipmap.no_image).into(infoImage);
                             System.out.println("3d");
-                            Play3DModel(myuri,dynamicContent,newListView,infoVideoView);
-                        };
+                            Play3DModel(myuri, dynamicContent, newListView, infoVideoView);
+                        }
+                        ;
                     }
 
                 }
+                //audio urls
+                String audioToFind = "data-audio-url";
+                int indexAudio = 0;
+                int indexTitle = 0;
+                while (indexAudio >= 0) {
+                    indexAudio = responseString.indexOf(audioToFind, indexAudio + 1);
+                    System.out.println("Index " + indexAudio);
+
+                    if (indexAudio > 0) {
+                        indexAudio += 16;
+
+                        int lastIndexAudio = responseString.indexOf('\"', indexAudio) > 0 ? responseString.indexOf('\"', indexAudio) : responseString.indexOf('\'', indexAudio);
+                        String myAudioUri = responseString.substring(indexAudio, lastIndexAudio);
+                        indexTitle = responseString.indexOf("data-audio-title=", lastIndexAudio + 1);
+                        indexTitle = indexTitle + 18;
+                        int lastIndexTitle = responseString.indexOf('\"', indexTitle) > 0 ? responseString.indexOf('\"', indexTitle) : responseString.indexOf('\'', indexTitle);
+                        System.out.println("Found uri Audio: " + myAudioUri);
+                        String myTitle = responseString.substring(indexTitle, lastIndexTitle);
+                        System.out.println("Found uri TITLE " + myTitle);
+                        View newListView = getLayoutInflater().inflate(R.layout.card_video, dynamicContent, false);
+                        TextView infoVideoView = (TextView) newListView.findViewById(R.id.title);
+                        ImageView imageInfo=(ImageView) newListView.findViewById(R.id.PreView);
+                        if (myAudioUri.contains(".mp3")) {
+                            System.out.println("MP3");
+                            Picasso.get().load(R.drawable.icon).fit()
+                                    .centerInside().error(R.mipmap.no_image).into(imageInfo);
+                           // ImageView.
+                            myAudioUri = "https://www.moma.org" + myAudioUri;
+                            PlayAudio(myAudioUri, dynamicContent, newListView, infoVideoView, myTitle,urlImage);
+
+                        }
+
+
+                    }
+
+
+                }
+
 
             }
         });
@@ -105,6 +168,54 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
 
     }
 
+    private void PlayAudio(final String audioUrl, LinearLayout dynamicContent, final View newListView, TextView infoVideoView, String title, final String urlImage) {
+        System.out.println("Dentro play audio");
+
+
+        if (title != null) {
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                title = String.valueOf(Html.fromHtml(title.toString(), Html.FROM_HTML_MODE_LEGACY));
+
+            } else {
+                title = String.valueOf(Html.fromHtml(title.toString()));
+            }
+            title = title.replaceAll("\\<[^>]*>", "");
+            // title = title.replaceAll("a href=*","");
+            infoVideoView.setText(title);
+
+        } else {
+
+            infoVideoView.setText("Play Audio");
+        }
+        System.out.println(title);
+
+        final String audioTitle = title;
+        newListView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //passiamo l'url all'activity che si occuperà di riprodurre l'audio
+                System.out.println(audioUrl);
+                Intent audioIntent=new Intent(ArtworkDetailsActivity.this,AudioActivity.class);
+                audioIntent.putExtra("AudioUrl", audioUrl);
+                audioIntent.putExtra("AudioTitle", audioTitle);
+                if(urlImage!=null){
+                audioIntent.putExtra("Image",urlImage);
+                System.out.println("Img ok");}
+
+                startActivity(audioIntent);
+
+
+            }
+
+
+        });
+
+        dynamicContent.addView(newListView);
+
+
+    }
 
 
     private void PlayVideo(final String urlMedia, final LinearLayout dynamicContent, final View newListView, final TextView infoVideoView) {
@@ -130,8 +241,8 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                 } else {
                     title = String.valueOf(Html.fromHtml(title.toString()));
                 }
-
                 infoVideoView.setText(title);
+
 
                 newListView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -142,10 +253,71 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                         startActivity(browserIntent);
                     }
                 });
+
+
                 dynamicContent.addView(newListView);
+
+
+                //
+/*
+                newListView.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+
+                        setContentView(R.layout.audio_artwork_player);
+                         VideoView videoView = (VideoView) findViewById(R.id.videoView);
+                     MediaController mediaController = new MediaController(ArtworkDetailsActivity.this);
+                         //MediaController mediaController=(MediaController) findViewById(R.id.mediaController1);
+
+                        mediaController.setAnchorView(videoView);
+                        videoView.setMediaController(mediaController);
+                        //videoView.setVideoURI(Uri.parse(urlMedia));
+                        //https://www.youtube.com/embed/GqukPl3u5Pg
+                        videoView.setVideoURI(Uri.parse("http://www.youtube.com/watch?v=cxLG2wtE7TM"));
+                        videoView.requestFocus();
+                        videoView.start();
+
+
+                      //  VideoPlayer video=new VideoPlayer(urlMedia);
+
+
+                    }
+                });
+
+
+
+
+                dynamicContent.addView(newListView);
+              */
             }
         });
+
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
+    @Override
+    protected void onDestroy() {
+        finish();
+        super.onDestroy();
+    }
 }
+
+
+
+
+
+

@@ -26,7 +26,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class BeaconResultsActivity extends AppCompatActivity {
 
-    private static String url = "http://192.168.1.178:4000/"; //edit url
+    private static String url = "http://192.168.0.103:4000/"; //edit url
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +79,7 @@ public class BeaconResultsActivity extends AppCompatActivity {
                           try {
                               Intent artworkDetailsIntent=new Intent(BeaconResultsActivity.this,ArtworkDetailsActivity.class);
                               artworkDetailsIntent.putExtra("ArtworkUrl", artwork.getString("URL"));
+                              artworkDetailsIntent.putExtra("Image", artwork.getString("ThumbnailURL"));
                               startActivity(artworkDetailsIntent);
                          } catch (JSONException e) {
                              e.printStackTrace();
@@ -88,15 +89,16 @@ public class BeaconResultsActivity extends AppCompatActivity {
                  });
 
 
-                ((TextView)newArtworkView.findViewById(R.id.title_video)).setText(artwork.getString("Title"));
+                ((TextView)newArtworkView.findViewById(R.id.title)).setText(artwork.getString("Title"));
 
                 JSONArray artist = artwork.getJSONArray("Artist");
                 String a = "";
                 for (int j = 0; j < artist.length(); j++) a += artist.getString(j) + ((j == artist.length()-1) ? "" : ", ");
                 ((TextView)newArtworkView.findViewById(R.id.artist_artwork)).setText(a);
 
-                if(URLUtil.isValidUrl(artwork.getString("ThumbnailURL"))) Picasso.get().load(artwork.getString("ThumbnailURL")).fit()
-                        .centerCrop().error(R.mipmap.no_image).into((ImageView) newArtworkView.findViewById(R.id.videoPreView));
+                if(URLUtil.isValidUrl(artwork.getString("ThumbnailURL")))
+                    Picasso.get().load(artwork.getString("ThumbnailURL")).fit()
+                        .centerCrop().error(R.mipmap.no_image).into((ImageView) newArtworkView.findViewById(R.id.PreView));
 
                 ((TextView)newArtworkView.findViewById(R.id.data_artwork)).setText(artwork.getString("Date"));
 
