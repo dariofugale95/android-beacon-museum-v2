@@ -258,38 +258,6 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                 dynamicContent.addView(newListView);
 
 
-                //
-/*
-                newListView.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-
-                        setContentView(R.layout.audio_artwork_player);
-                         VideoView videoView = (VideoView) findViewById(R.id.videoView);
-                     MediaController mediaController = new MediaController(ArtworkDetailsActivity.this);
-                         //MediaController mediaController=(MediaController) findViewById(R.id.mediaController1);
-
-                        mediaController.setAnchorView(videoView);
-                        videoView.setMediaController(mediaController);
-                        //videoView.setVideoURI(Uri.parse(urlMedia));
-                        //https://www.youtube.com/embed/GqukPl3u5Pg
-                        videoView.setVideoURI(Uri.parse("http://www.youtube.com/watch?v=cxLG2wtE7TM"));
-                        videoView.requestFocus();
-                        videoView.start();
-
-
-                      //  VideoPlayer video=new VideoPlayer(urlMedia);
-
-
-                    }
-                });
-
-
-
-
-                dynamicContent.addView(newListView);
-              */
             }
         });
 
