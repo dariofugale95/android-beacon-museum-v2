@@ -1,5 +1,6 @@
 package com.castagnolofugale.smartmuseum;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +26,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class BeaconResultsActivity extends AppCompatActivity {
 
-    private static String url = "http://192.168.1.10:4000/"; //edit url
+    private static String url = "http://192.168.0.103:4000/"; //edit url
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,34 +57,72 @@ public class BeaconResultsActivity extends AppCompatActivity {
     }
 
     /** Recupera le informazioni dal server **/
-    private void showResults(JSONArray results) {
+    private void showResults(JSONArray results)
+    {
         Toast.makeText(BeaconResultsActivity.this, results.length() + " results", Toast.LENGTH_LONG).show();
         if(results.length() <= 0) return;
 
         LinearLayout dynamicContent = findViewById(R.id.dynamic_artwork);
         dynamicContent.removeAllViews();
 
-        for (int i = 0; i < results.length(); i++) {
-            try {
-                JSONObject artwork = results.getJSONObject(i);
+        for (int i = 0; i < results.length(); i++)
+        {
+            try
+            {
+               final JSONObject artwork = results.getJSONObject(i);
                 View newArtworkView = getLayoutInflater().inflate(R.layout.item_artwork, dynamicContent, false);
-                ((TextView)newArtworkView.findViewById(R.id.title_artwork)).setText(artwork.getString("Title"));
+
+                //associazione onclick alla view del singolo item
+                 newArtworkView.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View view) {
+                          try {
+                              Intent artworkDetailsIntent=new Intent(BeaconResultsActivity.this,ArtworkDetailsActivity.class);
+                              artworkDetailsIntent.putExtra("ArtworkUrl", artwork.getString("URL"));
+                              artworkDetailsIntent.putExtra("Image", artwork.getString("ThumbnailURL"));
+                              startActivity(artworkDetailsIntent);
+                         } catch (JSONException e) {
+                             e.printStackTrace();
+                             System.out.println("problema onclick");
+                         }
+                     }
+                 });
+
+
+                ((TextView)newArtworkView.findViewById(R.id.title)).setText(artwork.getString("Title"));
 
                 JSONArray artist = artwork.getJSONArray("Artist");
                 String a = "";
                 for (int j = 0; j < artist.length(); j++) a += artist.getString(j) + ((j == artist.length()-1) ? "" : ", ");
                 ((TextView)newArtworkView.findViewById(R.id.artist_artwork)).setText(a);
 
-                if(URLUtil.isValidUrl(artwork.getString("ThumbnailURL"))) Picasso.get().load(artwork.getString("ThumbnailURL")).fit()
-                        .centerCrop().error(R.mipmap.no_image).into((ImageView) newArtworkView.findViewById(R.id.imageView));
+                if(URLUtil.isValidUrl(artwork.getString("ThumbnailURL")))
+                    Picasso.get().load(artwork.getString("ThumbnailURL")).fit()
+                        .centerCrop().error(R.mipmap.no_image).into((ImageView) newArtworkView.findViewById(R.id.PreView));
 
                 ((TextView)newArtworkView.findViewById(R.id.data_artwork)).setText(artwork.getString("Date"));
+
+                ((TextView)newArtworkView.findViewById(R.id.id_artwork)).setText(artwork.getString("ObjectID"));
+
                 dynamicContent.addView(newArtworkView);
-            } catch (JSONException e) {
+            } catch (JSONException e)
+            {
                 e.printStackTrace();
             }
         }
     }
+/*
+    public void showArtworkDetails(View v)
+    {
+        Intent intent = new Intent(BeaconResultsActivity.this, ArtworkDetailsActivity.class);
+        TextView textView = (TextView) findViewById(R.id.id_artwork);
+        String objectId = (String) textView.getText();
+        System.out.println(objectId);
+        intent.putExtra("ObjectId", objectId);
+        startActivity(intent);
+    }
+
+ */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
