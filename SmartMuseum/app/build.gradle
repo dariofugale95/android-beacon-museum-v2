@@ -40,4 +40,7 @@ dependencies {
     implementation 'com.loopj.android:android-async-http:1.4.9'
 
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation 'org.mongodb:mongo-java-driver:3.0.3'
+
 }
