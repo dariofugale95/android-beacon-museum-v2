@@ -22,44 +22,35 @@ import com.squareup.picasso.Picasso;
 import cz.msebera.android.httpclient.Header;
 
 public class ArtworkDetailsActivity extends AppCompatActivity {
-   // private Context context;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // context=this;
         String url = getIntent().getStringExtra("ArtworkUrl");
-        String urlImage =getIntent().getStringExtra("Image");
-        //Bundle extras = getIntent().getExtras();
+        String urlImage = getIntent().getStringExtra("Image");
         setContentView(R.layout.activity_artowork_details_result);
         ActionBar actionBar = getSupportActionBar();
+
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("Details");
-        }
-        if (url != null) {
+    }
 
+        if (url != null) {
             System.out.println(url);
             getMedia(url,urlImage);
         }
     }
 
-
     private void getMedia(String url, final String urlImage) {
 
-
         final View progressBar2 = findViewById(R.id.progressLoading);
-
-
         new AsyncHttpClient().get(url, new TextHttpResponseHandler() {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 System.out.println(statusCode + " BAD");
-
             }
-
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
@@ -67,46 +58,41 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                 setContentView(R.layout.activity_artwork_details);
                 final LinearLayout dynamicContent = findViewById(R.id.videoList);
                 progressBar2.setVisibility(View.GONE);
-
-
                 dynamicContent.removeAllViews();
 
                 String toFind = "<iframe";
                 int index = 0;
-                //video and 3DModels urls
+
                 while (index >= 0) {
                     index = responseString.indexOf(toFind, index + 1);
+
                     if (index > 0) {
                         index = responseString.indexOf("src=", index);
                         index += 5;
                         String myuri = responseString.substring(index, responseString.indexOf(">", index));
                         int lastIndex = myuri.indexOf('\"') > 0 ? myuri.indexOf('\"') : myuri.indexOf('\'');
                         myuri = myuri.substring(0, lastIndex);
-                        //in uri conservo gli uri di tutti i video
-                        //uri.add(myuri);
-
                         System.out.println("Found uri " + myuri);
 
                         View newListView = getLayoutInflater().inflate(R.layout.card_video, dynamicContent, false);
                         TextView infoVideoView = (TextView) newListView.findViewById(R.id.title);
                         ImageView infoImage=(ImageView) newListView.findViewById(R.id.PreView);
+
                         if (myuri.contains("youtube")) {
                             Picasso.get().load(R.drawable.icon_movie).fit()
                                     .centerInside().error(R.mipmap.no_image).into(infoImage);
                             PlayVideo(myuri, dynamicContent, newListView, infoVideoView);
-                            // uriYouTube.add(myuri);
                         }
+
                         if (myuri.contains("sketchfab")) {
                             Picasso.get().load(R.drawable.icon_3d).fit()
                                                                .centerInside().error(R.mipmap.no_image).into(infoImage);
                             System.out.println("3d");
                             Play3DModel(myuri, dynamicContent, newListView, infoVideoView);
                         }
-                        ;
                     }
-
                 }
-                //audio urls
+
                 String audioToFind = "data-audio-url";
                 int indexAudio = 0;
                 int indexTitle = 0;
@@ -116,7 +102,6 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
 
                     if (indexAudio > 0) {
                         indexAudio += 16;
-
                         int lastIndexAudio = responseString.indexOf('\"', indexAudio) > 0 ? responseString.indexOf('\"', indexAudio) : responseString.indexOf('\'', indexAudio);
                         String myAudioUri = responseString.substring(indexAudio, lastIndexAudio);
                         indexTitle = responseString.indexOf("data-audio-title=", lastIndexAudio + 1);
@@ -128,30 +113,23 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                         View newListView = getLayoutInflater().inflate(R.layout.card_video, dynamicContent, false);
                         TextView infoVideoView = (TextView) newListView.findViewById(R.id.title);
                         ImageView imageInfo=(ImageView) newListView.findViewById(R.id.PreView);
+
                         if (myAudioUri.contains(".mp3")) {
                             System.out.println("MP3");
                             Picasso.get().load(R.drawable.icon).fit()
                                     .centerInside().error(R.mipmap.no_image).into(imageInfo);
-                           // ImageView.
+
                             myAudioUri = "https://www.moma.org" + myAudioUri;
                             PlayAudio(myAudioUri, dynamicContent, newListView, infoVideoView, myTitle,urlImage);
-
                         }
-
-
                     }
-
-
                 }
-
-
             }
         });
     }
 
     private void Play3DModel(final String threeDModel, LinearLayout dynamicContent, View newListView, TextView infoVideoView) {
         System.out.println("Dentro play3d");
-
         infoVideoView.setText("3D Model");
 
         newListView.setOnClickListener(new View.OnClickListener() {
@@ -164,13 +142,10 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
             }
         });
         dynamicContent.addView(newListView);
-
-
     }
 
     private void PlayAudio(final String audioUrl, LinearLayout dynamicContent, final View newListView, TextView infoVideoView, String title, final String urlImage) {
         System.out.println("Dentro play audio");
-
 
         if (title != null) {
 
@@ -181,13 +156,12 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                 title = String.valueOf(Html.fromHtml(title.toString()));
             }
             title = title.replaceAll("\\<[^>]*>", "");
-            // title = title.replaceAll("a href=*","");
             infoVideoView.setText(title);
 
         } else {
-
             infoVideoView.setText("Play Audio");
         }
+
         System.out.println(title);
 
         final String audioTitle = title;
@@ -205,27 +179,20 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                 System.out.println("Img ok");}
 
                 startActivity(audioIntent);
-
-
             }
 
 
         });
 
         dynamicContent.addView(newListView);
-
-
     }
 
-
     private void PlayVideo(final String urlMedia, final LinearLayout dynamicContent, final View newListView, final TextView infoVideoView) {
-
         new AsyncHttpClient().get(urlMedia, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 System.out.println(statusCode + " BAD");
             }
-
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
@@ -254,14 +221,11 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
                     }
                 });
 
-
                 dynamicContent.addView(newListView);
-
-
             }
         });
-
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
@@ -283,9 +247,3 @@ public class ArtworkDetailsActivity extends AppCompatActivity {
         super.onDestroy();
     }
 }
-
-
-
-
-
-

@@ -26,7 +26,8 @@ import cz.msebera.android.httpclient.Header;
 
 public class BeaconResultsActivity extends AppCompatActivity {
 
-    private static String url = "http://192.168.0.103:4000/"; //edit url
+    // Ip address - server nodejs
+    private static String url = "http://192.168.1.149:4000/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +89,6 @@ public class BeaconResultsActivity extends AppCompatActivity {
                      }
                  });
 
-
                 ((TextView)newArtworkView.findViewById(R.id.title)).setText(artwork.getString("Title"));
 
                 JSONArray artist = artwork.getJSONArray("Artist");
@@ -111,17 +111,6 @@ public class BeaconResultsActivity extends AppCompatActivity {
             }
         }
     }
-/*
-    public void showArtworkDetails(View v)
-    {
-        Intent intent = new Intent(BeaconResultsActivity.this, ArtworkDetailsActivity.class);
-        TextView textView = (TextView) findViewById(R.id.id_artwork);
-        String objectId = (String) textView.getText();
-        intent.putExtra("ObjectId", objectId);
-        startActivity(intent);
-    }
-
- */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -40,7 +40,6 @@ public class AudioActivity extends AppCompatActivity implements OnPreparedListen
             actionBar.setTitle("Audio Player");
         }
         setContentView(R.layout.audio_artwork_player);
-        //((TextView)findViewById(R.id.textAudio)).setText("Audio Player");
         audioFile = this.getIntent().getStringExtra("AudioUrl");
         audioTitle=this.getIntent().getStringExtra("AudioTitle");
         urlImage=this.getIntent().getStringExtra("Image");
@@ -65,7 +64,6 @@ public class AudioActivity extends AppCompatActivity implements OnPreparedListen
         } catch (IOException e) {
             Log.e("[MediaPlayer]", "IO Error" + audioFile + " cannot open resource.", e);
         }
-
     }
 
     @Override
@@ -82,7 +80,6 @@ public class AudioActivity extends AppCompatActivity implements OnPreparedListen
         mediaController.show(1000);
         return false;
     }
-
 
     //MediaPlayerControl
     public void start() {
@@ -116,8 +113,6 @@ public class AudioActivity extends AppCompatActivity implements OnPreparedListen
     public boolean canPause() {
         return true;
     }
-
-
 
     public boolean canSeekBackward() {
         return true;
